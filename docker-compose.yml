@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  server:
+    image: michailzyusko2001/benefit.monolith:latest
+    container_name: benefit.server
+    command: 'pm2 start ecosystem.config.js'
+    env_file:
+      - .env.local
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    networks:
+      - app-net
+
+  postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_DB: benefit
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "!michail.zyusko_2001!"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - '5432:5432'
+    volumes:
+      - ../2. Init Database:/docker-entrypoint-initdb.d
+      - .:/var/lib/postgresql/data
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  docker-nest-postgres:
