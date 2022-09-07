@@ -9,6 +9,7 @@
     "node": "16.13.1"
   },
   "scripts": {
+    "pm2": "pm2 ecosystem.config.js",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "start": "nest start",
