@@ -7,10 +7,13 @@ import { Product } from "./modules/products/entity/product.entity";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { HttpErrorFilter } from "./exceptions/http-error.filter";
+import { UsersModule } from "./modules/users/users.module";
+import { User } from "./modules/users/entity/user.entity";
 
 @Module({
   imports: [
     ProductsModule,
+    UsersModule,
     PriceParserModule,
     ConfigModule.forRoot({
       envFilePath: [".env.local"],
@@ -23,7 +26,7 @@ import { HttpErrorFilter } from "./exceptions/http-error.filter";
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       // database: `${process.env.DB_NAME}_${process.env.CONTRY}`,
-      entities: [Product],
+      autoLoadEntities: true,
       synchronize: process.env.NODE_ENV !== "production",
       cache: {
         duration: 1e4,

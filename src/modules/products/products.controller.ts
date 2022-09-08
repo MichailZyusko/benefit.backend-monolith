@@ -11,11 +11,11 @@ import {
   Query,
 } from "@nestjs/common";
 import { ProductsService } from "./products.service";
-import { Product } from "./entity/product.entity";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { GetProductsDto } from "./dto/get-products.dto";
 import { GetProductByBarcodeDto } from "./dto/get-product-by-barcode.dto";
+import { OmitedProduct } from "./types";
 
 @Controller("products")
 export class ProductsController {
@@ -23,13 +23,17 @@ export class ProductsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() getProductsDto: GetProductsDto): Promise<Product[]> {
+  async findAll(
+    @Query() getProductsDto: GetProductsDto
+  ): Promise<OmitedProduct[]> {
     return await this.productService.findAll(getProductsDto);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
+  async create(
+    @Body() createProductDto: CreateProductDto
+  ): Promise<OmitedProduct> {
     return await this.productService.create(createProductDto);
   }
 
@@ -37,7 +41,7 @@ export class ProductsController {
   @HttpCode(HttpStatus.OK)
   async findByBarcode(
     @Param() getProductByBarcodeDto: GetProductByBarcodeDto
-  ): Promise<Product> {
+  ): Promise<OmitedProduct> {
     return await this.productService.findByBarcode(getProductByBarcodeDto);
   }
 
@@ -46,7 +50,7 @@ export class ProductsController {
   async update(
     @Body() updateProductDto: UpdateProductDto,
     @Param() getProductByBarcodeDto: GetProductByBarcodeDto
-  ): Promise<Product> {
+  ): Promise<OmitedProduct> {
     return await this.productService.update({
       updateProductDto,
       getProductByBarcodeDto,
