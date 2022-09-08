@@ -4,33 +4,27 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
-  Index,
 } from "typeorm";
 
-@Entity({
-  orderBy: {
-    popularity: "DESC",
-  },
-})
-export class Product {
+@Entity()
+export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Index("barcode-idx", { unique: true })
-  @Column({ unique: true })
-  barcode: string;
+  @Column()
+  first_name: string;
 
   @Column()
-  name: string;
-
-  @Column({ length: 5000 })
-  description: string;
+  last_name: string;
 
   @Column({ nullable: true, default: null })
   image: string;
 
-  @Column({ default: 0, unsigned: true, select: false })
-  popularity: number;
+  @Column({ unique: true, select: false })
+  email: string;
+
+  @Column({ select: false })
+  password: string;
 
   @CreateDateColumn({ select: false })
   created_at: Date;
