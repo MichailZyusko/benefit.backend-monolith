@@ -7,7 +7,7 @@ module.exports = {
     // Advanced features
     instances: 2, 
     exec_mode: "cluster",
-      watch: true,
+    watch: true,
 
     env_production: {
       NODE_ENV: "production"
@@ -22,8 +22,7 @@ module.exports = {
 
     // Control flow
     max_restarts: 10,
-        exp_backoff_restart_delay: 3000,
+    exp_backoff_restart_delay: 3000,
     max_memory_restart: '450M',
-
   }]
 }
