@@ -23,7 +23,7 @@ export class UsersService {
     private dataSource: DataSource
   ) {}
 
-  async findAll({ take = 40, skip = 0 }: GetUsersDto): Promise<OmitedUser[]> {
+  async findAll({ take, skip }: GetUsersDto): Promise<OmitedUser[]> {
     return this.userRepository.find({
       take,
       skip,

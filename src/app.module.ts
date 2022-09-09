@@ -3,17 +3,17 @@ import { AppController } from "./app.controller";
 import { ProductsModule } from "./modules/products/products.module";
 import { PriceParserModule } from "./modules/price-parser/price-parser.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Product } from "./modules/products/entity/product.entity";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { HttpErrorFilter } from "./exceptions/http-error.filter";
 import { UsersModule } from "./modules/users/users.module";
-import { User } from "./modules/users/entity/user.entity";
+import { StoresModule } from "./modules/stores/stores.module";
 
 @Module({
   imports: [
     ProductsModule,
     UsersModule,
+    StoresModule,
     PriceParserModule,
     ConfigModule.forRoot({
       envFilePath: [".env.local"],
@@ -27,7 +27,8 @@ import { User } from "./modules/users/entity/user.entity";
       database: process.env.DB_NAME,
       // database: `${process.env.DB_NAME}_${process.env.CONTRY}`,
       autoLoadEntities: true,
-      synchronize: process.env.NODE_ENV !== "production",
+      // synchronize: process.env.NODE_ENV !== "production",
+      synchronize: true,
       cache: {
         duration: 1e4,
       },
