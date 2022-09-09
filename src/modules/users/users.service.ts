@@ -22,7 +22,7 @@ export class UsersService {
     @InjectDataSource()
     private dataSource: DataSource
   ) {}
-
+  
   async findAll({ take, skip }: GetUsersDto): Promise<OmitedUser[]> {
     return this.userRepository.find({
       take,

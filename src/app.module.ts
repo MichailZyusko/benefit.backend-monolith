@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { ProductsModule } from "./modules/products/products.module";
-import { PriceParserModule } from "./modules/price-parser/price-parser.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
@@ -14,7 +13,6 @@ import { StoresModule } from "./modules/stores/stores.module";
     ProductsModule,
     UsersModule,
     StoresModule,
-    PriceParserModule,
     ConfigModule.forRoot({
       envFilePath: [".env.local"],
     }),
@@ -27,8 +25,7 @@ import { StoresModule } from "./modules/stores/stores.module";
       database: process.env.DB_NAME,
       // database: `${process.env.DB_NAME}_${process.env.CONTRY}`,
       autoLoadEntities: true,
-      // synchronize: process.env.NODE_ENV !== "production",
-      synchronize: true,
+      synchronize: process.env.NODE_ENV !== "production",
       cache: {
         duration: 1e4,
       },
