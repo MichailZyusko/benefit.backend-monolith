@@ -1,20 +1,18 @@
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { ProductsModule } from "./modules/products/products.module";
-import { PriceParserModule } from "./modules/price-parser/price-parser.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Product } from "./modules/products/entity/product.entity";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { HttpErrorFilter } from "./exceptions/http-error.filter";
 import { UsersModule } from "./modules/users/users.module";
-import { User } from "./modules/users/entity/user.entity";
+import { StoresModule } from "./modules/stores/stores.module";
 
 @Module({
   imports: [
     ProductsModule,
     UsersModule,
-    PriceParserModule,
+    StoresModule,
     ConfigModule.forRoot({
       envFilePath: [".env.local"],
     }),

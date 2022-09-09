@@ -22,10 +22,7 @@ export class ProductsService {
     private dataSource: DataSource
   ) {}
 
-  async findAll({
-    take = 40,
-    skip = 0,
-  }: GetProductsDto): Promise<OmitedProduct[]> {
+  async findAll({ take, skip }: GetProductsDto): Promise<OmitedProduct[]> {
     return this.productRepository.find({
       take,
       skip,
