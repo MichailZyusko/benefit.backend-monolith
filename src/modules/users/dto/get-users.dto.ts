@@ -6,10 +6,10 @@ export class GetUsersDto {
   @IsNumber()
   @IsPositive()
   @IsOptional()
-  take?: number;
+  take?: number = 40;
 
   @Transform(({ value }) => parseInt(value))
   @IsNumber()
   @IsOptional()
-  skip?: number;
+  skip?: number = 0;
 }

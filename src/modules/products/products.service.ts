@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Product } from "./entity/product.entity";
 import { DataSource, Repository } from "typeorm";
@@ -10,7 +6,6 @@ import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { GetProductsDto } from "./dto/get-products.dto";
 import { GetProductByBarcodeDto } from "./dto/get-product-by-barcode.dto";
-import { DBExceptions } from "src/exceptions";
 import { OmitedProduct } from "./types";
 
 @Injectable()
@@ -22,13 +17,16 @@ export class ProductsService {
     private dataSource: DataSource
   ) {}
 
-  async findAll({
-    take = 40,
-    skip = 0,
-  }: GetProductsDto): Promise<OmitedProduct[]> {
+  async findAll({ take, skip }: GetProductsDto): Promise<OmitedProduct[]> {
     return this.productRepository.find({
       take,
       skip,
+      relationLoadStrategy: "query",
+      relations: {
+        offers: {
+          store: true,
+        },
+      },
       cache: {
         id: "products",
         milliseconds: 1e4,
@@ -45,12 +43,7 @@ export class ProductsService {
       const { barcode } = createProductDto;
 
       const product = await this.productRepository.findOneBy({ barcode });
-
-      if (product)
-        throw new BadRequestException({
-          message: `Product with barcode: ${barcode} already exists`,
-          code: DBExceptions.PRODUCT_ALREADY_EXISTS,
-        });
+      Product.checkExistenceOfProduct({ product, barcode });
 
       const { created_at, updated_at, popularity, ...result } =
         await this.productRepository.save(createProductDto);
@@ -75,13 +68,7 @@ export class ProductsService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const product = await this.productRepository.findOneBy({ barcode });
-
-      if (!product)
-        throw new NotFoundException({
-          message: `Product with barcode: ${barcode} not found`,
-          code: DBExceptions.PRODUCT_NOT_FOUND,
-        });
+      const product = await this.productRepository.findOneByOrFail({ barcode });
 
       await this.productRepository.increment({ barcode }, "popularity", 1);
       // TODO: Is really need
@@ -109,13 +96,7 @@ export class ProductsService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const product = await this.productRepository.findOneBy({ barcode });
-
-      if (!product)
-        throw new NotFoundException({
-          message: `Product with barcode: ${barcode} not found`,
-          code: DBExceptions.PRODUCT_NOT_FOUND,
-        });
+      await this.productRepository.findOneByOrFail({ barcode });
 
       // FIXME: .returning("id, barcode, name, description, image")
       const {
@@ -145,13 +126,7 @@ export class ProductsService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const product = await this.productRepository.findOneBy({ barcode });
-
-      if (!product)
-        throw new NotFoundException({
-          message: `Product with barcode: ${barcode} not found`,
-          code: DBExceptions.PRODUCT_NOT_FOUND,
-        });
+      const product = await this.productRepository.findOneByOrFail({ barcode });
 
       await this.productRepository.remove(product);
       await this.dataSource.queryResultCache.remove(["products"]);
