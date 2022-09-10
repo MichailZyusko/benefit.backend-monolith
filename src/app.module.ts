@@ -7,12 +7,14 @@ import { APP_FILTER } from "@nestjs/core";
 import { HttpErrorFilter } from "./exceptions/http-error.filter";
 import { UsersModule } from "./modules/users/users.module";
 import { StoresModule } from "./modules/stores/stores.module";
+import { OffersModule } from "./modules/offers/offers.module";
 
 @Module({
   imports: [
     ProductsModule,
     UsersModule,
     StoresModule,
+    OffersModule,
     ConfigModule.forRoot({
       envFilePath: [".env.local"],
     }),

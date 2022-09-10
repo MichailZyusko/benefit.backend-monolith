@@ -1,11 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
-import { DBExceptions } from "src/exceptions";
 import { OmitedStore } from "./types";
 import { GetStoresDto } from "./dto/get-stores.dto";
 import { CreateStoreDto } from "./dto/create-store.dto";
@@ -39,15 +34,13 @@ export class StoreService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const { address } = createStoreDto;
+      const { address, franchise } = createStoreDto;
 
-      const store = await this.storeRepository.findOneBy({ address });
-
-      if (store)
-        throw new BadRequestException({
-          message: `Store with address: "${address}" already exists`,
-          code: DBExceptions.STORE_ALREADY_EXISTS,
-        });
+      const store = await this.storeRepository.findOneBy({
+        address,
+        franchise,
+      });
+      Store.checkExistenceOfStore({ store, address, franchise });
 
       const { created_at, updated_at, ...result } =
         await this.storeRepository.save(createStoreDto);
@@ -65,15 +58,7 @@ export class StoreService {
   }
 
   async findByAddress({ address }: GetStoreByAddressDto): Promise<OmitedStore> {
-    const store = await this.storeRepository.findOneBy({ address });
-
-    if (!store)
-      throw new NotFoundException({
-        message: `Store with address: "${address}" not found`,
-        code: DBExceptions.STORE_NOT_FOUND,
-      });
-
-    return store;
+    return this.storeRepository.findOneByOrFail({ address });
   }
 
   async update({
@@ -88,13 +73,7 @@ export class StoreService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const store = await this.storeRepository.findOneBy({ address });
-
-      if (!store)
-        throw new NotFoundException({
-          message: `Store with address: "${address}" not found`,
-          code: DBExceptions.STORE_NOT_FOUND,
-        });
+      await this.storeRepository.findOneByOrFail({ address });
 
       // FIXME: .returning("id, address, franchise")
       const {
@@ -105,7 +84,6 @@ export class StoreService {
         .returning("id, address, franchise")
         .where("address = :address", { address })
         .execute();
-
       await this.dataSource.queryResultCache.remove(["stores"]);
 
       return result;
@@ -124,13 +102,7 @@ export class StoreService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const store = await this.storeRepository.findOneBy({ address });
-
-      if (!store)
-        throw new NotFoundException({
-          message: `Store with address: "${address}" not found`,
-          code: DBExceptions.STORE_NOT_FOUND,
-        });
+      const store = await this.storeRepository.findOneByOrFail({ address });
 
       await this.storeRepository.remove(store);
       await this.dataSource.queryResultCache.remove(["stores"]);
