@@ -1,11 +1,6 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository, InjectDataSource } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
-import { DBExceptions } from "src/exceptions";
 import { Repository, DataSource } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { GetUserByEmailDto } from "./dto/get-user-by-email.dto";
@@ -22,7 +17,7 @@ export class UsersService {
     @InjectDataSource()
     private dataSource: DataSource
   ) {}
-  
+
   async findAll({ take, skip }: GetUsersDto): Promise<OmitedUser[]> {
     return this.userRepository.find({
       take,
@@ -43,13 +38,7 @@ export class UsersService {
       const { email, password } = createUserDto;
 
       const user = await this.userRepository.findOneBy({ email });
-
-      if (user) {
-        throw new BadRequestException({
-          message: `User with email: ${email} already exists`,
-          code: DBExceptions.USER_ALREADY_EXISTS,
-        });
-      }
+      User.checkExistenceOfUser({ user, email });
 
       const hashedPassword = await bcrypt.hash(password, +process.env.SALT);
 
@@ -77,15 +66,7 @@ export class UsersService {
   }
 
   async findByEmail({ email }: GetUserByEmailDto): Promise<OmitedUser> {
-    const user = await this.userRepository.findOneBy({ email });
-
-    if (!user)
-      throw new NotFoundException({
-        message: `User with email: ${email} not found`,
-        code: DBExceptions.USER_NOT_FOUND,
-      });
-
-    return user;
+    return this.userRepository.findOneByOrFail({ email });
   }
 
   async update({
@@ -100,13 +81,7 @@ export class UsersService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user = await this.userRepository.findOneBy({ email });
-
-      if (!user)
-        throw new NotFoundException({
-          message: `User with email: ${email} not found`,
-          code: DBExceptions.USER_NOT_FOUND,
-        });
+      await this.userRepository.findOneByOrFail({ email });
 
       const {
         raw: [result],
@@ -134,13 +109,7 @@ export class UsersService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user = await this.userRepository.findOneBy({ email });
-
-      if (!user)
-        throw new NotFoundException({
-          message: `User with email: ${email} not found`,
-          code: DBExceptions.USER_NOT_FOUND,
-        });
+      const user = await this.userRepository.findOneByOrFail({ email });
 
       await this.userRepository.remove(user);
       await this.dataSource.queryResultCache.remove(["users"]);

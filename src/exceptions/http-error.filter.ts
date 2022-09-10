@@ -3,9 +3,43 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
-  HttpException,
   HttpStatus,
 } from "@nestjs/common";
+
+type ApiError = {
+  httpCode: number;
+  errorCode: number;
+  name: string;
+  message: string;
+  timestamp: string;
+  stack: any;
+  path?: string;
+  method?: string;
+};
+
+const generateError = (e: any): ApiError => {
+  let httpCode = HttpStatus.INTERNAL_SERVER_ERROR;
+
+  switch (e.constructor.name) {
+    case "EntityNotFoundError": {
+      httpCode = 404;
+      break;
+    }
+    default: {
+      httpCode = e.status || HttpStatus.INTERNAL_SERVER_ERROR;
+      break;
+    }
+  }
+
+  return {
+    httpCode,
+    errorCode: e?.response?.code || 0,
+    name: e.name,
+    message: e.message,
+    timestamp: new Date().toISOString(),
+    stack: e.stack,
+  };
+};
 
 @Catch()
 export class HttpErrorFilter implements ExceptionFilter {
@@ -16,38 +50,13 @@ export class HttpErrorFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     const response = ctx.getResponse();
 
-    const statusCode =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-    const message =
-      exception instanceof HttpException
-        ? exception.message || exception.message
-        : "Internal server error";
-
-    const devErrorResponse: any = {
-      statusCode,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      method: request.method,
-      errorName: exception?.name,
-      message: exception?.message,
-    };
-
-    const prodErrorResponse: any = {
-      statusCode,
-      message,
-    };
+    const errorResponse = generateError(exception);
 
     console.error(
-      `request method: ${request.method} request url${request.url}`,
-      JSON.stringify(devErrorResponse)
+      `request method: ${request.method} \nrequest url${request.url}\nexception:`,
+      exception
     );
 
-    response
-      .status(statusCode)
-      .json(
-        process.env.NODE_ENV === "dev" ? devErrorResponse : prodErrorResponse
-      );
+    response.status(errorResponse.httpCode).json(errorResponse);
   }
 }
