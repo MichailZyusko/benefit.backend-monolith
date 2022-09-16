@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { InjectRepository, InjectDataSource } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { Repository, DataSource } from "typeorm";
@@ -15,7 +16,8 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectDataSource()
-    private dataSource: DataSource
+    private dataSource: DataSource,
+    private configService: ConfigService
   ) {}
 
   async findAll({ take, skip }: GetUsersDto): Promise<OmitedUser[]> {
@@ -40,7 +42,10 @@ export class UsersService {
       const user = await this.userRepository.findOneBy({ email });
       User.checkExistenceOfUser({ user, email });
 
-      const hashedPassword = await bcrypt.hash(password, +process.env.SALT);
+      const hashedPassword = await bcrypt.hash(
+        password,
+        +this.configService.getOrThrow("SALT")
+      );
 
       const {
         password: _pswd,

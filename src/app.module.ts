@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { ProductsModule } from "./modules/products/products.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { HttpErrorFilter } from "./exceptions/http-error.filter";
 import { UsersModule } from "./modules/users/users.module";
@@ -17,20 +17,23 @@ import { OffersModule } from "./modules/offers/offers.module";
     OffersModule,
     ConfigModule.forRoot({
       envFilePath: [".env.local"],
+      isGlobal: true,
+      cache: true,
     }),
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      // database: `${process.env.DB_NAME}_${process.env.CONTRY}`,
-      autoLoadEntities: true,
-      synchronize: process.env.NODE_ENV !== "production",
-      cache: {
-        duration: 1e4,
-      },
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: "postgres",
+        host: config.get("DB_HOST"),
+        port: +config.get("DB_PORT"),
+        username: config.get("DB_USER"),
+        password: config.get("DB_PASSWORD"),
+        database: config.get("DB_NAME"),
+        // database: `${process.env.DB_NAME}_${process.env.CONTRY}`,
+        autoLoadEntities: true,
+        synchronize: config.get("NODE_ENV") !== "production",
+      }),
     }),
   ],
   controllers: [AppController],
