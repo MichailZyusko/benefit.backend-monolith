@@ -16,6 +16,7 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 import { GetProductsDto } from "./dto/get-products.dto";
 import { GetProductByBarcodeDto } from "./dto/get-product-by-barcode.dto";
 import { OmitedProduct } from "./types";
+import { GetProductByIdDto } from "./dto/get-product-by-id.dto";
 
 @Controller("products")
 export class ProductsController {
@@ -45,23 +46,23 @@ export class ProductsController {
     return await this.productService.findByBarcode(getProductByBarcodeDto);
   }
 
-  @Put(":barcode")
+  @Put(":id")
   @HttpCode(HttpStatus.OK)
   async update(
     @Body() updateProductDto: UpdateProductDto,
-    @Param() getProductByBarcodeDto: GetProductByBarcodeDto
+    @Param() getProductByIdDto: GetProductByIdDto
   ): Promise<OmitedProduct> {
     return await this.productService.update({
       updateProductDto,
-      getProductByBarcodeDto,
+      getProductByIdDto,
     });
   }
 
-  @Delete(":barcode")
+  @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteByBarcode(
-    @Param() getProductByBarcodeDto: GetProductByBarcodeDto
+    @Param() getProductByIdDto: GetProductByIdDto
   ): Promise<void> {
-    await this.productService.deleteByBarcode(getProductByBarcodeDto);
+    await this.productService.deleteById(getProductByIdDto);
   }
 }

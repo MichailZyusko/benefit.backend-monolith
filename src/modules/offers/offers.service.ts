@@ -77,8 +77,7 @@ export class OffersService {
           store,
         });
 
-      await this.dataSource.queryResultCache.remove(["offers"]);
-      await this.dataSource.queryResultCache.remove(["products"]);
+      await this.dataSource.queryResultCache.remove(["offers", "products:"]);
 
       return result;
     } catch (err) {
@@ -88,21 +87,6 @@ export class OffersService {
     } finally {
       await queryRunner.release();
     }
-  }
-
-  async findByBarcodeAndStore(
-    getOfferByBarcodeAndStoreDto: GetOfferByBarcodeAndStoreDto
-  ): Promise<OmitedOffer> {
-    const { barcode, address } = getOfferByBarcodeAndStoreDto;
-
-    const product = await this.productRepository.findOneByOrFail({ barcode });
-    const store = await this.storeRepository.findOneByOrFail({ address });
-    const offer = await this.offerRepository.findOneByOrFail({
-      store,
-      product,
-    });
-
-    return offer;
   }
 
   async update({
@@ -132,8 +116,7 @@ export class OffersService {
         .andWhere("productId = :productId", { productId: product.id })
         .execute();
 
-      await this.dataSource.queryResultCache.remove(["offers"]);
-      await this.dataSource.queryResultCache.remove(["products"]);
+      await this.dataSource.queryResultCache.remove(["offers", "products:"]);
 
       return result;
     } catch (err) {
@@ -163,8 +146,7 @@ export class OffersService {
       });
 
       await this.offerRepository.remove(offer);
-      await this.dataSource.queryResultCache.remove(["offers"]);
-      await this.dataSource.queryResultCache.remove(["products"]);
+      await this.dataSource.queryResultCache.remove(["offers", "products:"]);
     } catch (err) {
       await queryRunner.rollbackTransaction();
 

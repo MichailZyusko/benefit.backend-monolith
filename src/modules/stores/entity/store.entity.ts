@@ -32,7 +32,9 @@ export class Store {
   })
   franchise: StoreFranchise;
 
-  @OneToMany(() => Offer, (offer) => offer.store, { cascade: true })
+  @OneToMany(() => Offer, (offer) => offer.store, {
+    cascade: ["remove"],
+  })
   offer: Offer;
 
   @CreateDateColumn({ select: false })

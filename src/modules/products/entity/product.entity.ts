@@ -28,6 +28,7 @@ export class Product {
   @Column({ unique: true })
   barcode: string;
 
+  @Index({ fulltext: true })
   @Column()
   name: string;
 
@@ -41,8 +42,7 @@ export class Product {
   popularity: number;
 
   @OneToMany(() => Offer, (offer) => offer.product, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    cascade: ["remove"],
   })
   offers: Offer[];
 
