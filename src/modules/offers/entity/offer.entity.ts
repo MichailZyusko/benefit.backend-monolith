@@ -25,13 +25,13 @@ export class Offer {
   id: string;
 
   @ManyToOne(() => Product, (product) => product.offers, {
-    onDelete: "NO ACTION",
+    onDelete: "CASCADE",
     onUpdate: "NO ACTION",
   })
   product: Product;
 
   @ManyToOne(() => Store, (store) => store.offer, {
-    onDelete: "NO ACTION",
+    onDelete: "CASCADE",
     onUpdate: "NO ACTION",
   })
   store: Store;

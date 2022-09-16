@@ -1,6 +1,6 @@
 import { IsString, IsUUID } from "class-validator";
 
-export class GetUserByIdDto {
+export class GetStoreByIdDto {
   @IsString()
   @IsUUID(4)
   id: string;

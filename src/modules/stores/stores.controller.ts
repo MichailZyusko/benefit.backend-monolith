@@ -7,13 +7,11 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put,
   Query,
 } from "@nestjs/common";
 import { CreateStoreDto } from "./dto/create-store.dto";
-import { GetStoreByAddressDto } from "./dto/get-store-by-address.dto";
+import { GetStoreByIdDto } from "./dto/get-store-by-id.dto";
 import { GetStoresDto } from "./dto/get-stores.dto";
-import { UpdateStoreDto } from "./dto/update-store.dto";
 import { StoreService } from "./stores.service";
 import { OmitedStore } from "./types";
 
@@ -33,31 +31,26 @@ export class StoreController {
     return await this.storeService.create(createStoreDto);
   }
 
-  @Get(":address")
+  // TODO: Is really need ???
+  @Get(":id")
   @HttpCode(HttpStatus.OK)
-  async findByAddress(
-    @Param() getStoreByAddressDto: GetStoreByAddressDto
+  async findById(
+    @Param() getStoreByIdDto: GetStoreByIdDto
   ): Promise<OmitedStore> {
-    return await this.storeService.findByAddress(getStoreByAddressDto);
+    return await this.storeService.findById(getStoreByIdDto);
   }
 
-  @Put(":address")
-  @HttpCode(HttpStatus.OK)
-  async update(
-    @Body() updateStoreDto: UpdateStoreDto,
-    @Param() getStoreByAddressDto: GetStoreByAddressDto
-  ): Promise<OmitedStore> {
-    return await this.storeService.update({
-      updateStoreDto,
-      getStoreByAddressDto,
-    });
-  }
-
-  @Delete(":address")
+  @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteByAddress(
-    @Param() getStoreByAddressDto: GetStoreByAddressDto
-  ): Promise<void> {
-    await this.storeService.deleteByAddress(getStoreByAddressDto);
+  async deleteById(@Param() getStoreByIdDto: GetStoreByIdDto): Promise<void> {
+    await this.storeService.deleteById(getStoreByIdDto);
   }
+
+  // @Delete(":id/offers")
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // async deleteOfferById(
+  //   @Param() getStoreByIdDto: GetStoreByIdDto
+  // ): Promise<void> {
+  //   await this.storeService.deleteById(getStoreByIdDto);
+  // }
 }

@@ -15,5 +15,5 @@ export class GetProductsDto {
 
   @IsString()
   @IsOptional()
-  search?: string;
+  search?: string = "";
 }

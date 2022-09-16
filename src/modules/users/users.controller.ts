@@ -11,7 +11,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { GetUserByEmailDto } from "./dto/get-user-by-email.dto";
+import { GetUserByIdDto } from "./dto/get-user-by-email.dto";
 import { GetUsersDto } from "./dto/get-users.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { OmitedUser } from "./types";
@@ -33,31 +33,27 @@ export class UsersController {
     return await this.userService.create(createUserDto);
   }
 
-  @Get(":email")
+  @Get(":id")
   @HttpCode(HttpStatus.OK)
-  async findByEmail(
-    @Param() getUserByEmailDto: GetUserByEmailDto
-  ): Promise<OmitedUser> {
-    return await this.userService.findByEmail(getUserByEmailDto);
+  async findById(@Param() getUserByIdDto: GetUserByIdDto): Promise<OmitedUser> {
+    return await this.userService.findById(getUserByIdDto);
   }
 
-  @Put(":email")
+  @Put(":id")
   @HttpCode(HttpStatus.OK)
   async update(
     @Body() updateUserDto: UpdateUserDto,
-    @Param() getUserByEmailDto: GetUserByEmailDto
+    @Param() getUserByIdDto: GetUserByIdDto
   ): Promise<OmitedUser> {
     return await this.userService.update({
       updateUserDto,
-      getUserByEmailDto,
+      getUserByIdDto,
     });
   }
 
-  @Delete(":email")
+  @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteByEmail(
-    @Param() getUserByEmailDto: GetUserByEmailDto
-  ): Promise<void> {
-    await this.userService.deleteByEmail(getUserByEmailDto);
+  async deleteById(@Param() getUserByIdDto: GetUserByIdDto): Promise<void> {
+    await this.userService.deleteById(getUserByIdDto);
   }
 }

@@ -3,7 +3,7 @@ import { InjectRepository, InjectDataSource } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { Repository, DataSource } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { GetUserByEmailDto } from "./dto/get-user-by-email.dto";
+import { GetUserByIdDto } from "./dto/get-user-by-email.dto";
 import { GetUsersDto } from "./dto/get-users.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entity/user.entity";
@@ -65,32 +65,33 @@ export class UsersService {
     }
   }
 
-  async findByEmail({ email }: GetUserByEmailDto): Promise<OmitedUser> {
-    return this.userRepository.findOneByOrFail({ email });
+  async findById({ id }: GetUserByIdDto): Promise<OmitedUser> {
+    return this.userRepository.findOneByOrFail({ id });
   }
 
   async update({
     updateUserDto,
-    getUserByEmailDto: { email },
+    getUserByIdDto: { id },
   }: {
     updateUserDto: UpdateUserDto;
-    getUserByEmailDto: GetUserByEmailDto;
+    getUserByIdDto: GetUserByIdDto;
   }): Promise<OmitedUser> {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      await this.userRepository.findOneByOrFail({ email });
+      await this.userRepository.findOneByOrFail({ id });
 
       const {
         raw: [result],
       } = await this.userRepository
         .createQueryBuilder()
         .update(updateUserDto)
-        .where("email = :email", { email })
         .returning("id, first_name, last_name, image")
+        .where("id = :id", { id })
         .execute();
+
       await this.dataSource.queryResultCache.remove(["users"]);
 
       return result;
@@ -103,13 +104,13 @@ export class UsersService {
     }
   }
 
-  async deleteByEmail({ email }: GetUserByEmailDto) {
+  async deleteById({ id }: GetUserByIdDto) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user = await this.userRepository.findOneByOrFail({ email });
+      const user = await this.userRepository.findOneByOrFail({ id });
 
       await this.userRepository.remove(user);
       await this.dataSource.queryResultCache.remove(["users"]);

@@ -33,21 +33,11 @@ export class OffersController {
     return await this.offerService.create(createOfferDto);
   }
 
-  @Get(":barcode/:address")
-  @HttpCode(HttpStatus.OK)
-  async findByBarcodeAndStore(
-    @Param() getOfferByBarcodeAndStoreDto: GetOfferByBarcodeAndStoreDto
-  ): Promise<OmitedOffer> {
-    return await this.offerService.findByBarcodeAndStore(
-      getOfferByBarcodeAndStoreDto
-    );
-  }
-
-  @Put(":barcode/:address")
+  @Put()
   @HttpCode(HttpStatus.OK)
   async update(
     @Body() updateOfferDto: UpdateOfferDto,
-    @Param() getOfferByBarcodeAndStoreDto: GetOfferByBarcodeAndStoreDto
+    @Query() getOfferByBarcodeAndStoreDto: GetOfferByBarcodeAndStoreDto
   ): Promise<OmitedOffer> {
     return await this.offerService.update({
       updateOfferDto,
@@ -55,10 +45,10 @@ export class OffersController {
     });
   }
 
-  @Delete(":barcode/:address")
+  @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteByBarcodeAndStore(
-    @Param() getOfferByBarcodeAndStoreDto: GetOfferByBarcodeAndStoreDto
+    @Query() getOfferByBarcodeAndStoreDto: GetOfferByBarcodeAndStoreDto
   ): Promise<void> {
     await this.offerService.deleteByBarcodeAndStore(
       getOfferByBarcodeAndStoreDto
