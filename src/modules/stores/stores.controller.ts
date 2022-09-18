@@ -9,12 +9,14 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { CreateStoreDto } from "./dto/create-store.dto";
 import { GetStoreByIdDto } from "./dto/get-store-by-id.dto";
 import { GetStoresDto } from "./dto/get-stores.dto";
 import { StoreService } from "./stores.service";
 import { OmitedStore } from "./types";
 
+@ApiTags("Stores")
 @Controller("stores")
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}

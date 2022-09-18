@@ -5,11 +5,11 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
   Post,
   Put,
   Query,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { CreateOfferDto } from "./dto/create-offer.dto";
 import { GetOfferByBarcodeAndStoreDto } from "./dto/get-offer-by-barcode-and-store.dto";
 import { GetOffersDto } from "./dto/get-offers.dto";
@@ -17,6 +17,7 @@ import { UpdateOfferDto } from "./dto/update-offer.dto";
 import { OffersService } from "./offers.service";
 import { OmitedOffer } from "./types";
 
+@ApiTags("Offers")
 @Controller("offers")
 export class OffersController {
   constructor(private readonly offerService: OffersService) {}

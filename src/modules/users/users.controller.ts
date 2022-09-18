@@ -10,6 +10,7 @@ import {
   Put,
   Query,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { GetUserByIdDto } from "./dto/get-user-by-email.dto";
 import { GetUsersDto } from "./dto/get-users.dto";
@@ -17,6 +18,7 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { OmitedUser } from "./types";
 import { UsersService } from "./users.service";
 
+@ApiTags("Users")
 @Controller("users")
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
