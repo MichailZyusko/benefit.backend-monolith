@@ -21,7 +21,7 @@ export class GetProductsDto {
   @IsOptional()
   @ApiProperty({
     name: "skip",
-    description: "Number of products needed to skip ",
+    description: "Number of products needed to skip",
     required: false,
     example: 0,
     default: 0,

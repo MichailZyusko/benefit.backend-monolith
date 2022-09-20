@@ -20,6 +20,10 @@ import { GetProductByIdDto } from "./dto/get-product-by-id.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger/dist";
 
 @ApiTags("Products")
+@ApiResponse({
+  status: HttpStatus.INTERNAL_SERVER_ERROR,
+  description: "Something went wrong",
+})
 @Controller("products")
 export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
@@ -31,10 +35,6 @@ export class ProductsController {
       "Returns an array of products with information about offers in each store",
   })
   @ApiResponse({ status: HttpStatus.OK, description: "Success" })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: "Something went wrong",
-  })
   async findAll(
     @Query() getProductsDto: GetProductsDto
   ): Promise<OmitedProduct[]> {
@@ -66,10 +66,6 @@ export class ProductsController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: "Success" })
   @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: "Something went wrong",
-  })
-  @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Product not found",
   })
@@ -86,10 +82,6 @@ export class ProductsController {
       "Updates the product according to the parameters passed in the request body",
   })
   @ApiResponse({ status: HttpStatus.OK, description: "Success" })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: "Something went wrong",
-  })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Product not found",
@@ -110,10 +102,6 @@ export class ProductsController {
     summary: "Deletes a product by its id",
   })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: "Success" })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: "Something went wrong",
-  })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Product not found",
