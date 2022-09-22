@@ -7,7 +7,6 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 import { GetProductsDto } from "./dto/get-products.dto";
 import { GetProductByBarcodeDto } from "./dto/get-product-by-barcode.dto";
 import { OmitedProduct } from "./types";
-import { GetProductByIdDto } from "./dto/get-product-by-id.dto";
 
 @Injectable()
 export class ProductsService {
@@ -111,17 +110,17 @@ export class ProductsService {
 
   async update({
     updateProductDto,
-    getProductByIdDto: { id },
+    getProductByBarcodeDto: { barcode },
   }: {
     updateProductDto: UpdateProductDto;
-    getProductByIdDto: GetProductByIdDto;
+    getProductByBarcodeDto: GetProductByBarcodeDto;
   }): Promise<OmitedProduct> {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      await this.productRepository.findOneByOrFail({ id });
+      await this.productRepository.findOneByOrFail({ barcode });
 
       // FIXME: .returning("id, barcode, name, description, image")
       const {
@@ -130,7 +129,7 @@ export class ProductsService {
         .createQueryBuilder()
         .update(updateProductDto)
         .returning("id, barcode, name, description, image")
-        .where("id = :id", { id })
+        .where("barcode = :barcode", { barcode })
         .execute();
 
       await this.dataSource.queryResultCache.remove(["products:"]);
@@ -145,13 +144,13 @@ export class ProductsService {
     }
   }
 
-  async deleteById({ id }: GetProductByIdDto): Promise<void> {
+  async deleteByBarcode({ barcode }: GetProductByBarcodeDto): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const product = await this.productRepository.findOneByOrFail({ id });
+      const product = await this.productRepository.findOneByOrFail({ barcode });
 
       await this.productRepository.remove(product);
       await this.dataSource.queryResultCache.remove(["products:"]);

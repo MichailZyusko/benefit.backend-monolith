@@ -16,7 +16,6 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 import { GetProductsDto } from "./dto/get-products.dto";
 import { GetProductByBarcodeDto } from "./dto/get-product-by-barcode.dto";
 import { OmitedProduct } from "./types";
-import { GetProductByIdDto } from "./dto/get-product-by-id.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger/dist";
 
 @ApiTags("Products")
@@ -75,7 +74,7 @@ export class ProductsController {
     return await this.productService.findByBarcode(getProductByBarcodeDto);
   }
 
-  @Put(":id")
+  @Put(":barcode")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary:
@@ -88,18 +87,18 @@ export class ProductsController {
   })
   async update(
     @Body() updateProductDto: UpdateProductDto,
-    @Param() getProductByIdDto: GetProductByIdDto
+    @Param() getProductByBarcodeDto: GetProductByBarcodeDto
   ): Promise<OmitedProduct> {
     return await this.productService.update({
       updateProductDto,
-      getProductByIdDto,
+      getProductByBarcodeDto,
     });
   }
 
-  @Delete(":id")
+  @Delete(":barcode")
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
-    summary: "Deletes a product by its id",
+    summary: "Deletes a product by its barcode",
   })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: "Success" })
   @ApiResponse({
@@ -107,8 +106,8 @@ export class ProductsController {
     description: "Product not found",
   })
   async deleteByBarcode(
-    @Param() getProductByIdDto: GetProductByIdDto
+    @Param() getProductByBarcodeDto: GetProductByBarcodeDto
   ): Promise<void> {
-    await this.productService.deleteById(getProductByIdDto);
+    await this.productService.deleteByBarcode(getProductByBarcodeDto);
   }
 }
