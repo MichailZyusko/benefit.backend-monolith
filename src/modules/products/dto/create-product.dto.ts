@@ -35,7 +35,7 @@ export class CreateProductDto {
   @IsOptional()
   @ApiProperty({
     name: "image",
-    description: "Product naimageme",
+    description: "Product image",
     required: false,
     example: "Coca-Cola-2l.png",
   })
