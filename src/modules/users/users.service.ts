@@ -4,7 +4,7 @@ import { InjectRepository, InjectDataSource } from "@nestjs/typeorm";
 import * as bcrypt from "bcrypt";
 import { Repository, DataSource } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { GetUserByIdDto } from "./dto/get-user-by-email.dto";
+import { GetUserByIdDto } from "./dto/get-user-by-id.dto";
 import { GetUsersDto } from "./dto/get-users.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entity/user.entity";

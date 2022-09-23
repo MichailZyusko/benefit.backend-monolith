@@ -13,7 +13,7 @@ import {
 } from "typeorm";
 
 type Props = {
-  address: string;
+  storeId: string;
   barcode: string;
   offer: Offer;
 };
@@ -50,10 +50,10 @@ export class Offer {
 
   //#################################################################//
 
-  static checkExistenceOfOffer({ offer, address, barcode }: Props) {
+  static checkExistenceOfOffer({ offer, storeId, barcode }: Props) {
     if (offer) {
       throw new BadRequestException({
-        message: `Offer with address: "${address}" and barcode: "${barcode}" already exists`,
+        message: `Offer with id: "${storeId}" and barcode: "${barcode}" already exists`,
         code: DBExceptions.OFFER_ALREADY_EXISTS,
       });
     }
