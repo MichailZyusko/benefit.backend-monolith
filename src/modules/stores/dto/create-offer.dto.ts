@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsNumber, IsPositive, IsString, Min } from "class-validator";
-import { StoreFranchise } from "src/modules/stores/enums";
+import { IsNumber, IsPositive, Min } from "class-validator";
 
 export class CreateOfferDto {
   @Transform(({ value }) => parseInt(value))
@@ -26,14 +25,4 @@ export class CreateOfferDto {
     default: 1,
   })
   quantity: 1;
-
-  @IsString()
-  @ApiProperty({
-    name: "storeFranchise",
-    description: "Store franchise",
-    required: true,
-    enum: StoreFranchise,
-    example: "Соседи",
-  })
-  storeFranchise: StoreFranchise;
 }
