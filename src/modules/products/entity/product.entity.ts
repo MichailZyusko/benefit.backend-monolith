@@ -1,6 +1,6 @@
 import { BadRequestException } from "@nestjs/common";
 import { DBExceptions } from "src/exceptions";
-import { Offer } from "src/modules/offers/entity/offer.entity";
+import { Offer } from "src/modules/stores/entity/offer.entity";
 import {
   Entity,
   Column,
@@ -28,6 +28,7 @@ export class Product {
   @Column({ unique: true })
   barcode: string;
 
+  @Index({ fulltext: true })
   @Column()
   name: string;
 
@@ -41,8 +42,7 @@ export class Product {
   popularity: number;
 
   @OneToMany(() => Offer, (offer) => offer.product, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    cascade: ["remove"],
   })
   offers: Offer[];
 

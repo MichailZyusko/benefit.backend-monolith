@@ -1,30 +1,30 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsNumber, IsOptional, IsPositive } from "class-validator";
+import { IsNumber, IsOptional, IsPositive, Min } from "class-validator";
 
-export class GetUsersDto {
+export class UpdateOfferDto {
   @Transform(({ value }) => parseInt(value))
   @IsNumber()
   @IsPositive()
   @IsOptional()
   @ApiProperty({
-    name: "take",
-    description: "Number of users per page",
+    name: "price",
+    description: "Product price",
     required: false,
-    example: 40,
-    default: 40,
+    example: "151",
   })
-  take?: number = 40;
+  price?: number;
 
   @Transform(({ value }) => parseInt(value))
   @IsNumber()
+  @Min(1)
   @IsOptional()
   @ApiProperty({
-    name: "skip",
-    description: "Number of users needed to skip",
+    name: "quantity",
+    description: "Quantity of products on sale",
     required: false,
-    example: 0,
-    default: 0,
+    example: "2",
+    default: 1,
   })
-  skip?: number = 0;
+  quantity?: 1;
 }
