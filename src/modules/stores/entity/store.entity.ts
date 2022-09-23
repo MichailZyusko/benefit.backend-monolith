@@ -1,6 +1,6 @@
 import { BadRequestException } from "@nestjs/common";
 import { DBExceptions } from "src/exceptions";
-import { Offer } from "src/modules/offers/entity/offer.entity";
+import { Offer } from "./offer.entity";
 import {
   Entity,
   Column,

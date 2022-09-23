@@ -26,7 +26,7 @@ export class ProductsService {
       take,
       skip,
       relationLoadStrategy: "query",
-      select: ["id", "name", "image", "offers"],
+      select: ["id", "name", "image", "offers", "barcode"],
       // loadRelationIds: {
       //   relations: ["store"],
       // },
