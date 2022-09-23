@@ -2,10 +2,11 @@ import { Module } from "@nestjs/common";
 import { ProductsModule } from "./modules/products/products.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule } from "@nestjs/config";
-import { APP_FILTER } from "@nestjs/core";
+import { APP_FILTER, APP_GUARD } from "@nestjs/core";
 import { HttpErrorFilter } from "./exceptions/http-error.filter";
 import { UsersModule } from "./modules/users/users.module";
 import { StoresModule } from "./modules/stores/stores.module";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 
 @Module({
   imports: [
@@ -16,6 +17,10 @@ import { StoresModule } from "./modules/stores/stores.module";
       envFilePath: [".env.local"],
       isGlobal: true,
       cache: true,
+    }),
+    ThrottlerModule.forRoot({
+      ttl: 1,
+      limit: 100,
     }),
     TypeOrmModule.forRoot({
       type: "postgres",
@@ -37,6 +42,10 @@ import { StoresModule } from "./modules/stores/stores.module";
     {
       provide: APP_FILTER,
       useClass: HttpErrorFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
