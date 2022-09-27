@@ -7,12 +7,15 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 import { GetProductsDto } from "./dto/get-products.dto";
 import { GetProductByBarcodeDto } from "./dto/get-product-by-barcode.dto";
 import { OmitedProduct } from "./types";
+import { Category } from "../categories/entity/category.entity";
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
     @InjectDataSource()
     private dataSource: DataSource
   ) {}
@@ -38,6 +41,7 @@ export class ProductsService {
         offers: {
           store: true,
         },
+        category: true,
       },
       cache: {
         // TODO: Replace to real cache system
@@ -53,13 +57,21 @@ export class ProductsService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const { barcode } = createProductDto;
+      const { barcode, category_id, ...productBody } = createProductDto;
 
       const product = await this.productRepository.findOneBy({ barcode });
       Product.checkExistenceOfProduct({ product, barcode });
 
+      const category = await this.categoryRepository.findOneByOrFail({
+        id: category_id,
+      });
+
       const { created_at, updated_at, popularity, ...result } =
-        await this.productRepository.save(createProductDto);
+        await this.productRepository.save({
+          ...productBody,
+          barcode,
+          category,
+        });
 
       await this.dataSource.queryResultCache.remove(["products:"]);
 
@@ -109,7 +121,7 @@ export class ProductsService {
   }
 
   async update({
-    updateProductDto,
+    updateProductDto: { category_id, ...productBody },
     getProductByBarcodeDto: { barcode },
   }: {
     updateProductDto: UpdateProductDto;
@@ -122,12 +134,19 @@ export class ProductsService {
     try {
       await this.productRepository.findOneByOrFail({ barcode });
 
+      let category: Category;
+      if (category_id) {
+        category = await this.categoryRepository.findOneByOrFail({
+          id: category_id,
+        });
+      }
+
       // FIXME: .returning("id, barcode, name, description, image")
       const {
         raw: [result],
       } = await this.productRepository
         .createQueryBuilder()
-        .update(updateProductDto)
+        .update({ ...productBody, category })
         .returning("id, barcode, name, description, image")
         .where("barcode = :barcode", { barcode })
         .execute();
