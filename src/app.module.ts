@@ -7,12 +7,14 @@ import { HttpErrorFilter } from "./exceptions/http-error.filter";
 import { UsersModule } from "./modules/users/users.module";
 import { StoresModule } from "./modules/stores/stores.module";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { CategoriesModule } from "./modules/categories/categories.module";
 
 @Module({
   imports: [
     ProductsModule,
     UsersModule,
     StoresModule,
+    CategoriesModule,
     ConfigModule.forRoot({
       envFilePath: [".env.local"],
       isGlobal: true,
@@ -37,7 +39,6 @@ import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
       },
     }),
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_FILTER,

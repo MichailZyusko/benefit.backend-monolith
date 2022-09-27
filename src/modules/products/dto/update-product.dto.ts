@@ -1,5 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString, MaxLength } from "class-validator";
+import { Transform } from "class-transformer";
+import {
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MaxLength,
+} from "class-validator";
 
 export class UpdateProductDto {
   @IsOptional()
@@ -23,6 +30,18 @@ export class UpdateProductDto {
     example: "Напиток безалкогольлный Coca-Cola 2 литра",
   })
   description?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => parseInt(value))
+  @IsNumber()
+  @IsPositive()
+  @ApiProperty({
+    name: "category_id",
+    description: "Product category",
+    required: false,
+    example: "1",
+  })
+  category_id?: number;
 
   @IsOptional()
   @ApiProperty({

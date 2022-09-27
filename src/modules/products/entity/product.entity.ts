@@ -1,5 +1,6 @@
 import { BadRequestException } from "@nestjs/common";
 import { DBExceptions } from "src/exceptions";
+import { Category } from "src/modules/categories/entity/category.entity";
 import { Offer } from "src/modules/stores/entity/offer.entity";
 import {
   Entity,
@@ -9,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   Index,
   OneToMany,
+  ManyToOne,
 } from "typeorm";
 
 type Props = {
@@ -45,6 +47,12 @@ export class Product {
     cascade: ["remove"],
   })
   offers: Offer[];
+
+  @ManyToOne(() => Category, (category) => category.product, {
+    onDelete: "SET NULL",
+    onUpdate: "SET NULL",
+  })
+  category: Category;
 
   @CreateDateColumn({ select: false })
   created_at: Date;

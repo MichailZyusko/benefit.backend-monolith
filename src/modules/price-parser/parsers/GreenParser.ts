@@ -103,7 +103,7 @@ class GreenParser implements IParserStrategy {
           const product = await this.getProductById(id);
 
           if (product) {
-            await productsService.create(product);
+            // await productsService.create(product);
           }
         }
       }
