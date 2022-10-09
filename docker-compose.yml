@@ -2,9 +2,9 @@ version: "3"
 
 services:
   server:
-    image: michailzyusko2001/benefit.monolith:latest
+    image: michailzyusko2001/benefit.backend.monolith:latest
     container_name: benefit.server
-    command: 'pm2 start ecosystem.config.js'
+    command: 'node dist/main.js'
     env_file:
       - .env.local
     ports:
