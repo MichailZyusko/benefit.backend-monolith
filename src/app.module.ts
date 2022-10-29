@@ -8,6 +8,7 @@ import { UsersModule } from "./modules/users/users.module";
 import { StoresModule } from "./modules/stores/stores.module";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { CategoriesModule } from "./modules/categories/categories.module";
+import { AuthModule } from "./modules/auth/auth.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CategoriesModule } from "./modules/categories/categories.module";
     UsersModule,
     StoresModule,
     CategoriesModule,
+    AuthModule,
     ConfigModule.forRoot({
       envFilePath: [".env.local"],
       isGlobal: true,
@@ -34,9 +36,9 @@ import { CategoriesModule } from "./modules/categories/categories.module";
       // database: `${process.env.DB_NAME}_${process.env.CONTRY}`,
       autoLoadEntities: true,
       synchronize: process.env.NODE_ENV !== "production",
-      cache: {
-        duration: 1e4,
-      },
+      // cache: {
+      //   duration: 1e4,
+      // },
     }),
   ],
   providers: [

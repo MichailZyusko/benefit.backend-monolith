@@ -30,7 +30,7 @@ export class User {
   @Column({ unique: true, select: false })
   email: string;
 
-  @Column({ select: false })
+  @Column()
   password: string;
 
   @CreateDateColumn({ select: false })

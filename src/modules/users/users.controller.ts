@@ -6,12 +6,12 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  Post,
   Put,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { AccessTokenGuard } from "../auth/guards/accessToken.guard";
 import { GetUserByIdDto } from "./dto/get-user-by-id.dto";
 import { GetUsersDto } from "./dto/get-users.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -33,23 +33,9 @@ export class UsersController {
     summary: "Returns an array of users",
   })
   @ApiResponse({ status: HttpStatus.OK, description: "Success" })
+  @UseGuards(AccessTokenGuard)
   async findAll(@Query() getUsersDto: GetUsersDto): Promise<OmitedUser[]> {
     return await this.userService.findAll(getUsersDto);
-  }
-
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({
-    summary:
-      "Creates the user according to the parameters passed in the body of the request",
-  })
-  @ApiResponse({ status: HttpStatus.CREATED, description: "Success" })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: "User with same email already exists",
-  })
-  async create(@Body() createUserDto: CreateUserDto): Promise<OmitedUser> {
-    return await this.userService.create(createUserDto);
   }
 
   @Get(":id")
