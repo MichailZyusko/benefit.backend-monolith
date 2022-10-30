@@ -58,7 +58,11 @@ export class AuthService {
   }
 
   async signIn({ email, password }: LogInDto) {
-    const user = await this.userRepository.findOneByOrFail({ email });
+    const user = await this.userRepository
+      .createQueryBuilder()
+      .select(['User.id', 'User.password'])
+      .where("User.email = :email", { email })
+      .getOneOrFail();
 
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (!passwordMatches) throw new BadRequestException('Password or email are incorrect');
