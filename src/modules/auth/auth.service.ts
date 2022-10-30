@@ -8,7 +8,6 @@ import { ConfigService } from '@nestjs/config';
 import { TokensService } from '../tokens/tokens.service';
 import { Tokens } from '../tokens/types';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { LogOutDto } from './dto/logout.dto';
 import { RefreshDto } from './dto/refresh.dto';
 
 @Injectable()
@@ -20,7 +19,7 @@ export class AuthService {
     private dataSource: DataSource,
     private tokenService: TokensService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async signUp(createUserDto: CreateUserDto): Promise<Tokens> {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -37,7 +36,7 @@ export class AuthService {
         password,
         +this.configService.getOrThrow("SALT")
       );
-     
+
       const newUser = await this.userRepository.save({
         ...createUserDto,
         password: hashedPassword,
@@ -58,31 +57,31 @@ export class AuthService {
     }
   }
 
-	async signIn({ email, password }: LogInDto) {
+  async signIn({ email, password }: LogInDto) {
     const user = await this.userRepository.findOneByOrFail({ email });
 
     const passwordMatches = await bcrypt.compare(password, user.password);
-    if (!passwordMatches) throw new BadRequestException('Password is incorrect');
-    
+    if (!passwordMatches) throw new BadRequestException('Password or email are incorrect');
+
     const tokens = await this.tokenService.generateTokens({ userId: user.id, email });
     await this.tokenService.save({ userId: user.id, refreshToken: tokens.refreshToken });
 
     return tokens;
   }
 
-  async signOut({ sub }: LogOutDto) {
+  async signOut({ sub }: { sub: string }) {
     await this.tokenService.revokeTokens({ userId: sub });
   }
 
   async refreshTokens({ userId, chekingRefreshToken, email }: RefreshDto): Promise<Tokens> {
     const { refreshToken } = await this.tokenService.getRefreshToken({ userId });
-   
-    const refreshTokenMatches =await bcrypt.compare(
+
+    const refreshTokenMatches = await bcrypt.compare(
       chekingRefreshToken,
       refreshToken,
     );
-    if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
-    
+    if (!refreshTokenMatches) throw new ForbiddenException('RefreshToken is incorrect. Access Denied');
+
     const tokens = await this.tokenService.generateTokens({ userId, email });
     await this.tokenService.save({ userId, refreshToken: tokens.refreshToken });
 
