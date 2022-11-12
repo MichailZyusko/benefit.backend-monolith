@@ -18,7 +18,7 @@ export class ProductsService {
     private categoryRepository: Repository<Category>,
     @InjectDataSource()
     private dataSource: DataSource
-  ) {}
+  ) { }
 
   async findAll({
     take,
@@ -29,13 +29,16 @@ export class ProductsService {
       take,
       skip,
       relationLoadStrategy: "query",
-      select: ["id", "name", "image", "offers", "barcode"],
+      select: ["id", "name", "image", "offers", "barcode", "description", "measurement_unit", "volume", "popularity"],
       // loadRelationIds: {
       //   relations: ["store"],
       // },
       where: {
         // TODO: Replace on FTS (Full text search)
         name: ILike(`%${search}%`),
+      },
+      order: {
+        popularity: 'DESC'
       },
       relations: {
         offers: {
@@ -66,7 +69,7 @@ export class ProductsService {
         id: category_id,
       });
 
-      const { created_at, updated_at, popularity, ...result } =
+      const { created_at, updated_at, ...result } =
         await this.productRepository.save({
           ...productBody,
           barcode,
@@ -147,7 +150,7 @@ export class ProductsService {
       } = await this.productRepository
         .createQueryBuilder()
         .update({ ...productBody, category })
-        .returning("id, barcode, name, description, image")
+        .returning("id, barcode, name, description, image, popularity")
         .where("barcode = :barcode", { barcode })
         .execute();
 

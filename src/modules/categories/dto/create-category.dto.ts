@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 import {
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   MaxLength,
@@ -42,4 +43,13 @@ export class CreateCategoriesDto {
     example: "Фрукты",
   })
   name = "";
+
+  @IsOptional()
+  @ApiProperty({
+    name: "image",
+    description: "Category image",
+    required: false,
+    example: "Drinks.png",
+  })
+  image?: string;
 }

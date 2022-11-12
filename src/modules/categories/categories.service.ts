@@ -13,7 +13,7 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
     @InjectDataSource()
     private dataSource: DataSource
-  ) {}
+  ) { }
 
   async findAll({ parent_id }: GetCategoriesDto): Promise<OmitedCategory[]> {
     return this.categoryRepository.find({
@@ -38,7 +38,9 @@ export class CategoriesService {
     try {
       const { name, level, parent_id } = createCategoriesDto;
 
-      await this.categoryRepository.findOneByOrFail({ id: parent_id });
+      if (parent_id) {
+        await this.categoryRepository.findOneByOrFail({ id: parent_id });
+      }
 
       const category = await this.categoryRepository.findOneBy({
         name,
