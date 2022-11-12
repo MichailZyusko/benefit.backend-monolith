@@ -7,6 +7,7 @@ import {
   IsString,
   MaxLength,
 } from "class-validator";
+import { MeasurementUnit } from "../enums";
 
 export class CreateProductDto {
   @IsString()
@@ -30,7 +31,7 @@ export class CreateProductDto {
   name: string;
 
   @IsString()
-  @MaxLength(500)
+  @MaxLength(2000)
   @ApiProperty({
     name: "description",
     description: "Product description",
@@ -49,6 +50,28 @@ export class CreateProductDto {
     example: "1",
   })
   category_id: number;
+
+  @IsString()
+  @ApiProperty({
+    name: "measurement_unit",
+    description: "Product measurement unit",
+    required: true,
+    example: "кг.",
+    default: "кг.",
+  })
+  measurement_unit: MeasurementUnit;
+
+  @Transform(({ value }) => parseInt(value))
+  @IsNumber()
+  @IsPositive()
+  @ApiProperty({
+    name: "volume",
+    description: "Volume, weight or quantity of the product",
+    required: true,
+    example: "2",
+    default: 2,
+  })
+  volume: number;
 
   @IsOptional()
   @ApiProperty({

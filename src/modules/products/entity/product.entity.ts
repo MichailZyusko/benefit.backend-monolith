@@ -12,6 +12,7 @@ import {
   OneToMany,
   ManyToOne,
 } from "typeorm";
+import { MeasurementUnit } from "../enums";
 
 type Props = {
   product: Product;
@@ -34,7 +35,7 @@ export class Product {
   @Column()
   name: string;
 
-  @Column({ length: 5000 })
+  @Column({ length: 2000 })
   description: string;
 
   @Column({ nullable: true, default: null })
@@ -42,6 +43,15 @@ export class Product {
 
   @Column({ default: 0, unsigned: true, select: false })
   popularity: number;
+
+  @Column({
+    type: "enum",
+    enum: MeasurementUnit,
+  })
+  measurement_unit: MeasurementUnit;
+
+  @Column({ default: 0, unsigned: true })
+  volume: number;
 
   @OneToMany(() => Offer, (offer) => offer.product, {
     cascade: ["remove"],
