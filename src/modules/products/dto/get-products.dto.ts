@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
-import { IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
+import { IsArray, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
 
 export class GetProductsDto {
   @Transform(({ value }) => parseInt(value))
@@ -38,4 +38,23 @@ export class GetProductsDto {
     default: "",
   })
   search?: string = "";
+
+  @Transform(({ value }) => {
+    switch (typeof value) {
+      case 'string': return [value];
+      case 'object': return value;
+
+      default: return [];
+    }
+  })
+  @IsArray()
+  @IsOptional()
+  @ApiProperty({
+    name: "storeIds",
+    description: "An array of store IDs to filter by store",
+    required: false,
+    example: "storeIds=f9eac67c-25d0-4e85-b35a-ffd4bfaf2282&storeIds=06f7825d-7303-4042-9328-318e8091e3ee",
+    default: "",
+  })
+  storeIds?: string[];
 }
