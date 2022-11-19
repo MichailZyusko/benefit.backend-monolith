@@ -1,8 +1,9 @@
 export enum MeasurementUnit {
   KILOS = "кг.",
-  PIECES = "шт.",
-  LITERS = "л.",
+  GRAMS = "г.",
   MILIGRAMS = "мг.",
+  LITERS = "л.",
   MILILITERS = "мл.",
+  PIECES = "шт.",
   OTHERS = "",
 }

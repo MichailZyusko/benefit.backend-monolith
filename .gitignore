@@ -37,5 +37,8 @@ lerna-debug.log*
 # Enviroment Variables
 *.env.*
 
+# Certificate
+*.crt
+
 # pgdata
 /pgdata

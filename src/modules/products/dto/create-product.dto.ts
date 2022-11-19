@@ -21,7 +21,7 @@ export class CreateProductDto {
   barcode: string;
 
   @IsString()
-  @MaxLength(50)
+  @MaxLength(100)
   @ApiProperty({
     name: "name",
     description: "Product name",

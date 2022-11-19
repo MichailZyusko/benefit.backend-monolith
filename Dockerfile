@@ -44,7 +44,11 @@ FROM node:18-alpine As production
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+COPY --chown=node:node --from=build /usr/src/app/.env.local .
 
 EXPOSE 3000
 
 CMD ["node", "dist/main.js"]
+
+#sudo docker build . -t mickhail/benefit-app
+#sudo docker run -p 80:3000 -d mickhail/benefit-app
