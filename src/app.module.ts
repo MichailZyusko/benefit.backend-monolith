@@ -31,13 +31,13 @@ import { CategoriesModule } from "./modules/categories/categories.module";
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      ssl: {
-        rejectUnauthorized: true,
-        // ca: fs.readFileSync(
-        //     `${process.cwd()}/cert/ca-certificate.crt`.toString()
-        // ),
-        ca: process.env.CA_CERT,
-      },
+      // ssl: {
+      //   rejectUnauthorized: true,
+      //   // ca: fs.readFileSync(
+      //   //     `${process.cwd()}/cert/ca-certificate.crt`.toString()
+      //   // ),
+      //   ca: process.env.CA_CERT,
+      // },
       // database: `${process.env.DB_NAME}_${process.env.CONTRY}`,
       autoLoadEntities: true,
       synchronize: process.env.NODE_ENV !== "production",
