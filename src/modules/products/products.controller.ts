@@ -17,6 +17,7 @@ import { GetProductsDto } from "./dto/get-products.dto";
 import { GetProductByBarcodeDto } from "./dto/get-product-by-barcode.dto";
 import { OmitedProduct } from "./types";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger/dist";
+import { Pagination } from "src/global/dto/pagination.dto";
 
 @ApiTags("Products")
 @ApiResponse({
@@ -25,7 +26,7 @@ import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger/dist";
 })
 @Controller("products")
 export class ProductsController {
-  constructor(private readonly productService: ProductsService) {}
+  constructor(private readonly productService: ProductsService) { }
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -36,8 +37,8 @@ export class ProductsController {
   @ApiResponse({ status: HttpStatus.OK, description: "Success" })
   async findAll(
     @Query() getProductsDto: GetProductsDto
-  ): Promise<OmitedProduct[]> {
-    return await this.productService.findAll(getProductsDto);
+  ): Promise<Pagination<OmitedProduct>> {
+    return this.productService.findAll(getProductsDto);
   }
 
   @Post()
