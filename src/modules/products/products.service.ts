@@ -8,6 +8,8 @@ import { GetProductsDto } from "./dto/get-products.dto";
 import { GetProductByBarcodeDto } from "./dto/get-product-by-barcode.dto";
 import { OmitedProduct } from "./types";
 import { Category } from "../categories/entity/category.entity";
+import { PageMetaDto } from "../../global/dto/page-meta.dto";
+import { Pagination } from "src/global/dto/pagination.dto";
 
 @Injectable()
 export class ProductsService {
@@ -20,12 +22,10 @@ export class ProductsService {
     private dataSource: DataSource
   ) { }
 
-  async findAll({
-    take,
-    skip,
-    search,
-  }: GetProductsDto): Promise<OmitedProduct[]> {
-    return this.productRepository.find({
+  async findAll(getProductsDto: GetProductsDto) {
+    const { take, skip, search, page } = getProductsDto
+
+    const dataPromise = this.productRepository.find({
       take,
       skip,
       relationLoadStrategy: "query",
@@ -48,10 +48,23 @@ export class ProductsService {
       },
       cache: {
         // TODO: Replace to real cache system
-        id: `products:${search}`,
+        id: `products:${search}:${page}`,
         milliseconds: 1e4,
       },
     });
+    const countPromise = this.productRepository.countBy({
+      // TODO: Replace on FTS (Full text search)
+      name: ILike(`%${search}%`),
+    });
+
+    const [count, data] = await Promise.all([countPromise, dataPromise])
+
+    const meta = new PageMetaDto({
+      count,
+      pageOptionsDto: getProductsDto
+    });
+
+    return new Pagination<OmitedProduct>({ data, meta });
   }
 
   async create(createProductDto: CreateProductDto): Promise<OmitedProduct> {
