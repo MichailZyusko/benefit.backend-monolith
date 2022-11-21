@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { Product } from "./entity/product.entity";
-import { DataSource, ILike, Repository } from "typeorm";
+import { DataSource, ILike, In, Repository } from "typeorm";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { GetProductsDto } from "./dto/get-products.dto";
@@ -23,7 +23,7 @@ export class ProductsService {
   ) { }
 
   async findAll(getProductsDto: GetProductsDto) {
-    const { take, skip, search, page } = getProductsDto
+    const { take, skip, search, page, storeIds } = getProductsDto
 
     const dataPromise = this.productRepository.find({
       take,
@@ -36,6 +36,11 @@ export class ProductsService {
       where: {
         // TODO: Replace on FTS (Full text search)
         name: ILike(`%${search}%`),
+        offers: storeIds ? {
+          store: {
+            id: In(storeIds),
+          }
+        } : {},
       },
       order: {
         popularity: 'DESC'
@@ -48,7 +53,7 @@ export class ProductsService {
       },
       cache: {
         // TODO: Replace to real cache system
-        id: `products:${search}:${page}`,
+        id: `products:${search}:${page}:${storeIds}`,
         milliseconds: 1e4,
       },
     });
