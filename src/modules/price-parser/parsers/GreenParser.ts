@@ -26,7 +26,7 @@ class GreenParser implements IParserStrategy {
     `https://shop-static.green-market.by/1400x1400-${imageName}`;
   private STORE_ID = 2;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): GreenParser {
     if (!GreenParser.instance) {
@@ -68,7 +68,7 @@ class GreenParser implements IParserStrategy {
     }
   }
 
-  async parse(productsService: ProductsService): Promise<void> {
+  async parse(): Promise<void> {
     try {
       console.time("Time");
 
@@ -102,9 +102,9 @@ class GreenParser implements IParserStrategy {
         for (const { id } of data.items) {
           const product = await this.getProductById(id);
 
-          if (product) {
-            await productsService.create(product);
-          }
+          // if (product) {
+          //   await productsService.create(product);
+          // }
         }
       }
       console.timeEnd("Time");

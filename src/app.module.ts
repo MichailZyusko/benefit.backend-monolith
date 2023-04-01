@@ -49,4 +49,4 @@ import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

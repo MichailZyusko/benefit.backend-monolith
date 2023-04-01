@@ -1,15 +1,18 @@
-import GreenParser from "./GreenParser";
 import { IParserStrategy } from "./interfaces/IParserStrategy";
-import { ProductsService } from "../../products/products.service";
+import GippoParser from "./GippoParser";
+import BelmarketParser from "./BelmarketParser";
+import 'dotenv/config';
 
 class Parsers {
-    private static parsers: Array<IParserStrategy>= [
-        GreenParser.getInstance(),
+    private static parsers: Array<IParserStrategy> = [
+        // GreenParser.getInstance(),
+        new GippoParser(),
+        new BelmarketParser()
     ];
 
-    static async updatePriceInfo(productsService: ProductsService): Promise<void> {
+    static async updatePriceInfo() {
         for (const parser of this.parsers) {
-            await parser.parse(productsService);
+            await parser.parse();
         }
     }
 }
