@@ -31,7 +31,7 @@ class YandexEdaParser implements IParserStrategy {
       return {
         id: product.name.trim(),
         description: product.description.trim(),
-        image: `${product.picture.url.split('/').slice(0, -1).join('/')}/800x800`,
+        image: `${product.picture.url.split('/').slice(0, -1).join('/')}/400x400nocrop`,
         price: +(product.decimalPromoPrice ?? product.decimalPrice),
       };
     } catch (error) {
@@ -110,7 +110,7 @@ class YandexEdaParser implements IParserStrategy {
         const offersResponse = await supabase
           .from('offers')
           .upsert({
-            store_id: '0cddc5bf-6a5f-4782-8154-4f0d20179fce',
+            store_id: this.STORE_ID,
             quantity: 1,
             product_id: product.id,
             price,
